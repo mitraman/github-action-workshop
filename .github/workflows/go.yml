@@ -6,6 +6,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
+      
+    - name: Check out code
+      uses: actions/checkout@v2
 
     - name: Set up Go 1.13
       uses: actions/setup-go@v1
