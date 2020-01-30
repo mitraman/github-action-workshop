@@ -17,6 +17,11 @@ jobs:
       run: |
         go mod init "github.com/mitraman/github-action-workshop"
         
+    - name: debugging
+      run: |
+        ls
+      working-directory: ./test
+        
     - name: Terratest
       run: |
         go test -v -timeout 30m
