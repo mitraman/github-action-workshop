@@ -1,4 +1,4 @@
-name: Go
+name: Terratest
 on: [push]
 jobs:
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       
-    - name: Check out code
+    - name: Check out repo code and tests
       uses: actions/checkout@v2
 
     - name: Set up Go 1.13
@@ -16,16 +16,11 @@ jobs:
         go-version: 1.13
       id: go
 
-    - name: Configure dependencies
+    - name: Configure dependencies for test
       run: |
         go mod init "github.com/mitraman/github-action-workshop"
         
-    - name: debugging
-      run: |
-        ls
-      working-directory: ./test
-        
-    - name: Terratest
+    - name: Run terratest
       run: |
         go test -v -timeout 30m
       working-directory: ./test
