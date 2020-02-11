@@ -15,12 +15,13 @@ import (
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 /* talk about testing basics in go - e.g. https://blog.alexellis.io/golang-writing-unit-tests/ */
 
 /* How do funcs and args work in Golang? Discuss the go test command and how it is in-built for Golang */
-func TestTerraformHelloWorldExample(t *testing.T) {
+func TestTerraformVPC(t *testing.T) {
 	t.Parallel()
 
 	// TK consider changing this to a specific region for simplicity
@@ -59,17 +60,19 @@ func TestTerraformHelloWorldExample(t *testing.T) {
 
 	// Get values from the output - this means our terraform scripts must output values to make them testable
 	vpcID := terraform.Output(t, terraformOptions, "main_vpc_id")
+	publicSubnetID := terraform.Output(t, terraformOptions, "public_subnet_id")
+	privateSubnetID := terraform.Output(t, terraformOptions, "private_subnet_id")
 
 	// Make a call to AWS and retrieve the subnets for our VPC id
-	subnets := aws.GetSubnetsForVpc(t, vpcId, awsRegion)
+	subnets := aws.GetSubnetsForVpc(t, vpcID, awsRegion)
 
 	// Verify that we have two subnets defined in our VPC
 	require.Equal(t, 2, len(subnets))
 
 	// Verify if the network that is supposed to be public is really public
-	assert.True(t, aws.IsPublicSubnet(t, publicSubnetId, awsRegion))
+	assert.True(t, aws.IsPublicSubnet(t, publicSubnetID, awsRegion))
 
 	// Verify if the network that is supposed to be private is really private
-	assert.False(t, aws.IsPublicSubnet(t, privateSubnetId, awsRegion))
+	assert.False(t, aws.IsPublicSubnet(t, privateSubnetID, awsRegion))
 	
 }
