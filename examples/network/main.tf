@@ -10,16 +10,19 @@ variable "aws_region" {
 variable "main_vpc_cidr" {
   description = "CIDR for the VPC (e.g. 10.0.0.0/16)"
   type        = string
+  default = "10.0.0.0/16"
 }
 
 variable "private_subnet_cidr" {
   description = "CIDR of the private subnet"
   type        = string
+  default = "10.10.1.0/24"
 }
 
 variable "public_subnet_cidr" {
   description = "CIDR of the public subnet"
   type        = string
+  default = "10.10.2.0/24"
 }
 
 # Configure AWS Provider
@@ -43,4 +46,16 @@ resource "aws_subnet" "public-subnet" {
 resource "aws_subnet" "private-subnet" {
   vpc_id     =  aws_vpc.main.id
   cidr_block = var.private_subnet_cidr
+}
+
+output "main_vpc_id" {
+  value = aws_vpc.main.id
+}
+
+output "public_subnet_id" {
+  value = aws_subnet.public-subnet.id
+}
+
+output "private_subnet_id" {
+  value = aws_subnet.private-subnet.id
 }
