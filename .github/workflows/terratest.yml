@@ -21,6 +21,9 @@ jobs:
         go mod init "github.com/mitraman/github-action-workshop"
         
     - name: Run terratest
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
       run: |
         go test -v -timeout 30m
       working-directory: ./test
