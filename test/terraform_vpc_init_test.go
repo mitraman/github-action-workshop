@@ -60,19 +60,36 @@ func TestTerraformVPC(t *testing.T) {
 
 	// Get values from the output - this means our terraform scripts must output values to make them testable
 	vpcID := terraform.Output(t, terraformOptions, "main_vpc_id")
-	publicSubnetID := terraform.Output(t, terraformOptions, "public_subnet_id")
-	privateSubnetID := terraform.Output(t, terraformOptions, "private_subnet_id")
+	publicSubnetAID := terraform.Output(t, terraformOptions, "public_subnet_a_id")
+	privateSubnetAID := terraform.Output(t, terraformOptions, "private_subnet_a_id")
+	publicSubnetBID := terraform.Output(t, terraformOptions, "public_subnet_b_id")
+	privateSubnetBID := terraform.Output(t, terraformOptions, "private_subnet_b_id")
+
 
 	// Make a call to AWS and retrieve the subnets for our VPC id
 	subnets := aws.GetSubnetsForVpc(t, vpcID, awsRegion)
 
-	// Verify that we have two subnets defined in our VPC
-	require.Equal(t, 2, len(subnets))
+	// Verify that we have four subnets defined in our VPC
+	require.Equal(t, 4, len(subnets))
+
+	// Verify that each availability zone has two subnets
+	// TODO - iterate through list of subnets and make sure that there are two in each AZ
+	azMap := make(map[string]int)
+
+	for i, subnet := range subnets {
+		// Check the AZ for this subnet and increment a counter
+		azMap[subnet.AvailabilityZone] = azMap[subnet.AvailabilityZone] + 1
+	}
+	require.Equal(t, 2, len(azMap))
+	// TODO also validate that each azMap key has a value of 2
+	
 
 	// Verify if the network that is supposed to be public is really public
-	assert.True(t, aws.IsPublicSubnet(t, publicSubnetID, awsRegion))
+	assert.True(t, aws.IsPublicSubnet(t, publicSubnetAID, awsRegion))
+	assert.True(t, aws.IsPublicSubnet(t, publicSubnetBID, awsRegion))
 
 	// Verify if the network that is supposed to be private is really private
-	assert.False(t, aws.IsPublicSubnet(t, privateSubnetID, awsRegion))
+	assert.False(t, aws.IsPublicSubnet(t, privateSubnetAID, awsRegion))
+	assert.False(t, aws.IsPublicSubnet(t, privateSubnetBID, awsRegion))
 	
 }
