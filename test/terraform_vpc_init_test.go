@@ -76,7 +76,7 @@ func TestTerraformVPC(t *testing.T) {
 	// TODO - iterate through list of subnets and make sure that there are two in each AZ
 	azMap := make(map[string]int)
 
-	for i, subnet := range subnets {
+	for subnet := range subnets {
 		// Check the AZ for this subnet and increment a counter
 		azMap[subnet.AvailabilityZone] = azMap[subnet.AvailabilityZone] + 1
 	}
