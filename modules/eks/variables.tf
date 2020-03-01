@@ -4,12 +4,12 @@ variable "aws_region" {
   default     = "eu-west-2"
 }
 
-variable "cluster_name" {  
-  type        = string
+variable "cluster_name" {
+  type = string
 }
 
-variable "vpc_id" {  
-  type        = string
+variable "vpc_id" {
+  type = string
 }
 
 variable "cluster_subnet_ids" {

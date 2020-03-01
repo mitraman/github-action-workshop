@@ -19,57 +19,57 @@ resource "aws_vpc" "main" {
   cidr_block = var.main_vpc_cidr
 
   tags = {
-    "Name" = var.vpc_name,
-    "kubernetes.io/cluster/${var.cluster-name}" =  "shared",
+    "Name"                                      = var.vpc_name,
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared",
   }
 }
 
 resource "aws_subnet" "public-subnet-a" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.public_subnet_a_cidr
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.public_subnet_a_cidr
   availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-      "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/elb"                    = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/elb"                    = "1"
+  }
 }
 
 resource "aws_subnet" "public-subnet-b" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.public_subnet_b_cidr  
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.public_subnet_b_cidr
   availability_zone = data.aws_availability_zones.available.names[1]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/elb"           = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/elb"                    = "1"
+  }
 }
 
 resource "aws_subnet" "private-subnet-a" {
-  vpc_id     =  aws_vpc.main.id
-  cidr_block = var.private_subnet_a_cidr
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_a_cidr
   availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/internal-elb"           = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
+  }
 }
 
 resource "aws_subnet" "private-subnet-b" {
-  vpc_id     =  aws_vpc.main.id
-  cidr_block = var.private_subnet_b_cidr
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_b_cidr
   availability_zone = data.aws_availability_zones.available.names[1]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/internal-elb"           = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
+  }
 }
 
 resource "aws_internet_gateway" "igw" {
@@ -89,53 +89,53 @@ resource "aws_route_table" "public-route" {
   }
 
   tags = {
-     "Name" = "ms-up-running"
+    "Name" = "ms-up-running"
   }
 }
 
 resource "aws_route_table_association" "public-a-association" {
-    subnet_id = aws_subnet.public-subnet-a.id
-    route_table_id = aws_route_table.public-route.id
+  subnet_id      = aws_subnet.public-subnet-a.id
+  route_table_id = aws_route_table.public-route.id
 }
 
 resource "aws_route_table_association" "public-b-association" {
-    subnet_id = aws_subnet.public-subnet-b.id
-    route_table_id = aws_route_table.public-route.id
+  subnet_id      = aws_subnet.public-subnet-b.id
+  route_table_id = aws_route_table.public-route.id
 }
 
 
 // Get two EIPs for the NATs
 resource "aws_eip" "nat-a" {
-    vpc = true
-    tags = {
-     "Name" = "ms-up-running"
-    }
+  vpc = true
+  tags = {
+    "Name" = "ms-up-running"
+  }
 }
 
 resource "aws_eip" "nat-b" {
-    vpc = true    
-    tags = {
-      "Name" = "ms-up-running"
-    }
+  vpc = true
+  tags = {
+    "Name" = "ms-up-running"
+  }
 }
 
 resource "aws_nat_gateway" "nat-gw-a" {
   allocation_id = aws_eip.nat-a.id
   subnet_id     = aws_subnet.public-subnet-a.id
-  depends_on = [aws_internet_gateway.igw]
+  depends_on    = [aws_internet_gateway.igw]
 
   tags = {
-     "Name" = "ms-up-running"
+    "Name" = "ms-up-running"
   }
 }
 
 resource "aws_nat_gateway" "nat-gw-b" {
   allocation_id = aws_eip.nat-b.id
   subnet_id     = aws_subnet.public-subnet-b.id
-  depends_on = [aws_internet_gateway.igw]
+  depends_on    = [aws_internet_gateway.igw]
 
   tags = {
-     "Name" = "ms-up-running"
+    "Name" = "ms-up-running"
   }
 }
 
@@ -143,12 +143,12 @@ resource "aws_route_table" "private-route-a" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat-gw-a.id
   }
 
   tags = {
-     "Name" = "ms-up-running"
+    "Name" = "ms-up-running"
   }
 }
 
@@ -156,21 +156,21 @@ resource "aws_route_table" "private-route-b" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat-gw-b.id
   }
 
   tags = {
-     "Name" = "ms-up-running"
+    "Name" = "ms-up-running"
   }
 }
 
 resource "aws_route_table_association" "private-a-association" {
-    subnet_id = aws_subnet.private-subnet-a.id
-    route_table_id = aws_route_table.private-route-a.id
+  subnet_id      = aws_subnet.private-subnet-a.id
+  route_table_id = aws_route_table.private-route-a.id
 }
 
 resource "aws_route_table_association" "private-b-association" {
-    subnet_id = aws_subnet.private-subnet-b.id
-    route_table_id = aws_route_table.private-route-b.id
+  subnet_id      = aws_subnet.private-subnet-b.id
+  route_table_id = aws_route_table.private-route-b.id
 }

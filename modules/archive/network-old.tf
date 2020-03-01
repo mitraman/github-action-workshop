@@ -18,9 +18,9 @@ resource "aws_vpc" "main" {
 
   // EKS/k8 requires us to add a kubernetes tag to VPC and subnet resources in order to make them discoverable
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+  }
 }
 
 # We need to define two availability zones for EKS
@@ -36,15 +36,15 @@ resource "aws_subnet" "public-subnet-a" {
 */
 
 resource "aws_subnet" "private-subnet-a" {
-  vpc_id     =  aws_vpc.main.id
-  cidr_block = var.private_subnet_a_cidr
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_a_cidr
   availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/internal-elb"           = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
+  }
 }
 
 /*
@@ -57,15 +57,15 @@ resource "aws_subnet" "public-subnet-b" {
 */
 
 resource "aws_subnet" "private-subnet-b" {
-  vpc_id     =  aws_vpc.main.id
-  cidr_block = var.private_subnet_b_cidr
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_b_cidr
   availability_zone = data.aws_availability_zones.available.names[1]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "shared"
-     "kubernetes.io/role/internal-elb"           = "1"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
+  }
 }
 
 /** NLB SETUP **/
@@ -180,7 +180,7 @@ resource "aws_eks_cluster" "eks-cluster" {
   role_arn = aws_iam_role.ms-node.arn
 
   vpc_config {
-    subnet_ids         = [aws_subnet.private-subnet-a.id, aws_subnet.private-subnet-b.id]
+    subnet_ids              = [aws_subnet.private-subnet-a.id, aws_subnet.private-subnet-b.id]
     endpoint_private_access = true
   }
 
@@ -190,8 +190,8 @@ resource "aws_eks_cluster" "eks-cluster" {
   ]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-   }
+    "Name" = "ms-up-running"
+  }
 }
 
 
@@ -204,8 +204,8 @@ resource "aws_iam_role" "eks-node-group-role" {
 
   assume_role_policy = jsonencode({
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "ec2.amazonaws.com"
       }
@@ -250,7 +250,7 @@ resource "aws_eks_node_group" "ms-nodegroup" {
   ]
 
   tags = {
-     "Name"                                      = "ms-up-running"
-     "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-   }
+    "Name"                                      = "ms-up-running"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+  }
 }

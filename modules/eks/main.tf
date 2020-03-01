@@ -125,7 +125,7 @@ resource "aws_eks_node_group" "ms-node-group" {
     min_size     = var.nodegroup_min_size
   }
 
-  disk_size = var.nodegroup_disk_size
+  disk_size      = var.nodegroup_disk_size
   instance_types = var.nodegroup_instance_types
 
 

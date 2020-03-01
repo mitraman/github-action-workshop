@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "vpc_name" {
   description = "The name of the VPC resource"
   type        = string
-  default = "ms-up-running"
+  default     = "ms-up-running"
 }
 
 variable "main_vpc_cidr" {
@@ -38,5 +38,5 @@ variable "private_subnet_b_cidr" {
 variable "cluster-name" {
   description = "The name of the EKS cluster that will be created"
   type        = string
-  default = "ms-up-running"
+  default     = "ms-up-running"
 }
