@@ -20,7 +20,7 @@ module "aws-kubernetes-cluster" {
   vpc_id             = module.aws-network.vpc_id
   cluster_subnet_ids = module.aws-network.subnet_ids
 
-  nodegroup_subnet_ids    = module.aws-network.private_subnet_ids
+  nodegroup_subnet_ids     = module.aws-network.private_subnet_ids
   nodegroup_disk_size      = "20"
   nodegroup_instance_types = ["t3.medium"]
   nodegroup_desired_size   = 1
