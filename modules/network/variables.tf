@@ -2,9 +2,7 @@
 variable "aws_region" {
   description = "AWS region ID for deployment (e.g. eu-west-1)"
   type        = string
-  default     = "eu-west-2"
 }
-
 
 variable "vpc_name" {
   description = "The name of the VPC resource"
@@ -31,7 +29,6 @@ variable "private_subnet_a_cidr" {
   description = "CIDR of the private subnet"
   type        = string
 }
-
 
 variable "private_subnet_b_cidr" {
   description = "CIDR of the private subnet"

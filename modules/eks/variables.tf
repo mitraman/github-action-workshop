@@ -4,19 +4,26 @@ variable "aws_region" {
   default     = "eu-west-2"
 }
 
-variable "cluster-name" {  
+variable "cluster_name" {  
   type        = string
 }
 
-variable "vpc-id" {  
+variable "vpc_id" {  
   type        = string
 }
 
-variable "cluster-subnet-ids" {
+variable "cluster_subnet_ids" {
   type = list(string)
 }
 
-variable "nodegroup-subnets-ids" {
+variable "nodegroup_subnet_ids" {
   type = list(string)
 }
 
+variable "nodegroup_disk_size" {
+  type = string
+}
+
+variable "nodegroup_instance_types" {
+  type = string
+}

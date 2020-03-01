@@ -40,7 +40,7 @@ resource "aws_iam_role_policy_attachment" "ms-cluster-AmazonEKSServicePolicy" {
 resource "aws_security_group" "ms-cluster" {
   name        = "ms-up-running-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = var.vpc-id
+  vpc_id      = var.vpc_id
 
   egress {
     from_port   = 0
@@ -55,12 +55,12 @@ resource "aws_security_group" "ms-cluster" {
 }
 
 resource "aws_eks_cluster" "ms-up-running" {
-  name     = var.cluster-name
+  name     = var.cluster_name
   role_arn = aws_iam_role.ms-cluster.arn
 
   vpc_config {
     security_group_ids = [aws_security_group.ms-cluster.id]
-    subnet_ids         = var.cluster-subnet-ids
+    subnet_ids         = var.cluster_subnet_ids
   }
 
   depends_on = [
@@ -117,13 +117,17 @@ resource "aws_eks_node_group" "ms-node-group" {
   cluster_name    = aws_eks_cluster.ms-up-running.name
   node_group_name = "microservices"
   node_role_arn   = aws_iam_role.ms-node.arn
-  subnet_ids      = var.nodegroup-subnets-ids
+  subnet_ids      = var.nodegroup_subnet_ids
 
   scaling_config {
-    desired_size = 1
-    max_size     = 1
-    min_size     = 1
+    desired_size = var.nodegroup_desired_size
+    max_size     = var.nodegroup_max_size
+    min_size     = var.nodegroup_min_size
   }
+
+  disk_size = var.nodegroup_disk_size
+  instance_types = var.nodegroup_instance_types
+
 
   depends_on = [
     aws_iam_role_policy_attachment.ms-node-AmazonEKSWorkerNodePolicy,
