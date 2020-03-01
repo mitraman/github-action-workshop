@@ -1,4 +1,10 @@
-
+terraform {
+  backend "s3" {
+    bucket = "rm-terraform-backend"
+    key    = "terraform/env/dev"
+    region = "eu-west-2"
+  }
+}
 
 module "aws-network" {
   source = "../../modules/network"
