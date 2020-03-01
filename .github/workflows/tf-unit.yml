@@ -12,7 +12,7 @@ jobs:
     - name: 'Terraform Format All Files'
       uses: hashicorp/terraform-github-actions@master
       with:
-        tf_actions_version: 0.12.13
+        tf_actions_version: 0.12.19
         tf_actions_subcommand: 'fmt'
         tf_actions_working_dir: '.'
         tf_actions_comment: true
@@ -21,7 +21,7 @@ jobs:
     - name: 'Terraform Init Dev'
       uses: hashicorp/terraform-github-actions@master
       with:
-        tf_actions_version: 0.12.13
+        tf_actions_version: 0.12.19
         tf_actions_subcommand: 'init'
         tf_actions_working_dir: './env/dev'
         tf_actions_comment: true
@@ -32,7 +32,7 @@ jobs:
     - name: 'Terraform Validate Dev'
       uses: hashicorp/terraform-github-actions@master
       with:
-        tf_actions_version: 0.12.13
+        tf_actions_version: 0.12.19
         tf_actions_subcommand: 'validate'
         tf_actions_working_dir: './env/dev'
         tf_actions_comment: true
@@ -44,7 +44,7 @@ jobs:
       id: 'terraform_plan'
       uses: hashicorp/terraform-github-actions@master
       with:
-        tf_actions_version: 0.12.13
+        tf_actions_version: 0.12.19
         tf_actions_subcommand: 'plan'
         tf_actions_working_dir: './env/dev'
         tf_actions_comment: true
