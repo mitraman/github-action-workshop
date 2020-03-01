@@ -1,12 +1,11 @@
 name: Lint Terraform
 
-on: pull_request
+on: 
+  push
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
