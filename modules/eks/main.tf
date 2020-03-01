@@ -2,19 +2,14 @@ provider "aws" {
   region = var.aws_region
 }
 
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-#
 # EKS Cluster Resources
 #  * IAM Role to allow EKS service to manage other AWS services
 #  * EC2 Security Group to allow networking traffic with EKS cluster
 #  * EKS Cluster
 #
 
-resource "aws_iam_role" "demo-cluster" {
-  name = "terraform-eks-demo-cluster"
+resource "aws_iam_role" "ms-cluster" {
+  name = "ms-up-running-cluster"
 
   assume_role_policy = <<POLICY
 {
@@ -32,20 +27,20 @@ resource "aws_iam_role" "demo-cluster" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "ms-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.demo-cluster.name
+  role       = aws_iam_role.ms-cluster.name
 }
 
-resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
+resource "aws_iam_role_policy_attachment" "ms-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = aws_iam_role.demo-cluster.name
+  role       = aws_iam_role.ms-cluster.name
 }
 
-resource "aws_security_group" "demo-cluster" {
-  name        = "terraform-eks-demo-cluster"
+resource "aws_security_group" "ms-cluster" {
+  name        = "ms-up-running-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc-id
 
   egress {
     from_port   = 0
@@ -55,22 +50,22 @@ resource "aws_security_group" "demo-cluster" {
   }
 
   tags = {
-    Name = "terraform-eks-demo"
+    Name = "ms-up-running"
   }
 }
 
-resource "aws_eks_cluster" "demo" {
+resource "aws_eks_cluster" "ms-up-running" {
   name     = var.cluster-name
-  role_arn = aws_iam_role.demo-cluster.arn
+  role_arn = aws_iam_role.ms-cluster.arn
 
   vpc_config {
-    security_group_ids = [aws_security_group.demo-cluster.id]
-    subnet_ids         = aws_subnet.demo[*].id
+    security_group_ids = [aws_security_group.ms-cluster.id]
+    subnet_ids         = var.cluster-subnet-ids
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.demo-cluster-AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.ms-cluster-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.ms-cluster-AmazonEKSServicePolicy,
   ]
 }
 
@@ -81,8 +76,8 @@ resource "aws_eks_cluster" "demo" {
 #  * EKS Node Group to launch worker nodes
 #
 
-resource "aws_iam_role" "demo-node" {
-  name = "terraform-eks-demo-node"
+resource "aws_iam_role" "ms-node" {
+  name = "ms-up-running-node"
 
   assume_role_policy = <<POLICY
 {
@@ -100,26 +95,29 @@ resource "aws_iam_role" "demo-node" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "demo-node-AmazonEKSWorkerNodePolicy" {
+resource "aws_iam_role_policy_attachment" "ms-node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.demo-node.name
+  role       = aws_iam_role.ms-node.name
 }
 
-resource "aws_iam_role_policy_attachment" "demo-node-AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "ms-node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.demo-node.name
+  role       = aws_iam_role.ms-node.name
 }
 
-resource "aws_iam_role_policy_attachment" "demo-node-AmazonEC2ContainerRegistryReadOnly" {
+resource "aws_iam_role_policy_attachment" "ms-node-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.demo-node.name
+  role       = aws_iam_role.ms-node.name
 }
 
-resource "aws_eks_node_group" "demo" {
-  cluster_name    = aws_eks_cluster.demo.name
-  node_group_name = "demo"
-  node_role_arn   = aws_iam_role.demo-node.arn
-  subnet_ids      = aws_subnet.demo[*].id
+
+//TODO: make scaling config variable by env
+//TODO: allow env to set machine size and AMI
+resource "aws_eks_node_group" "ms-node-group" {
+  cluster_name    = aws_eks_cluster.ms-up-running.name
+  node_group_name = "microservices"
+  node_role_arn   = aws_iam_role.ms-node.arn
+  subnet_ids      = var.nodegroup-subnets-ids
 
   scaling_config {
     desired_size = 1
@@ -128,8 +126,8 @@ resource "aws_eks_node_group" "demo" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.demo-node-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.demo-node-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.demo-node-AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.ms-node-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.ms-node-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.ms-node-AmazonEC2ContainerRegistryReadOnly,
   ]
 }

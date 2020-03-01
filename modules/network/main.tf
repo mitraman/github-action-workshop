@@ -18,10 +18,10 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "main" {
   cidr_block = var.main_vpc_cidr
 
-  tags = map(
-    "Name", "ms-up-running",
-    "kubernetes.io/cluster/${var.cluster-name}", "shared",
-  )
+  tags = {
+    "Name" = var.vpc_name,
+    "kubernetes.io/cluster/${var.cluster-name}" =  "shared",
+  }
 }
 
 resource "aws_subnet" "public-subnet-a" {
