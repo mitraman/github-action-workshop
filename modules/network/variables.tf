@@ -11,32 +11,34 @@ variable "main_vpc_cidr" {
   default = "10.10.0.0/16"
 }
 
-variable "private_subnet_a_cidr" {
-  description = "CIDR of the private subnet"
-  type        = string
-  default = "10.10.64.0/18"
-}
-
 variable "public_subnet_a_cidr" {
   description = "CIDR of the public subnet"
   type        = string
-  default = "10.10.64.0/18"
-}
-
-variable "private_subnet_b_cidr" {
-  description = "CIDR of the private subnet"
-  type        = string
-  default = "10.10.128.0/18"
+  default = "10.10.0.0/18"
 }
 
 variable "public_subnet_b_cidr" {
   description = "CIDR of the public subnet"
   type        = string
+  default = "10.10.64.0/18"
+}
+
+variable "private_subnet_a_cidr" {
+  description = "CIDR of the private subnet"
+  type        = string
+  default = "10.10.128.0/18"
+}
+
+
+variable "private_subnet_b_cidr" {
+  description = "CIDR of the private subnet"
+  type        = string
   default = "10.10.192.0/18"
 }
+
 
 # EKS Vars
 variable "cluster-name" {  
   type        = string
-  default = "eks-cluster"
+  default = "example-cluster"
 }
