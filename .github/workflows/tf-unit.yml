@@ -26,6 +26,8 @@ jobs:
         tf_actions_working_dir: './env/dev'
         tf_actions_comment: true
       env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: 'Terraform Validate Dev'
       uses: hashicorp/terraform-github-actions@master
@@ -35,6 +37,8 @@ jobs:
         tf_actions_working_dir: './env/dev'
         tf_actions_comment: true
       env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: 'Terraform Plan Dev'
       id: 'terraform_plan'
