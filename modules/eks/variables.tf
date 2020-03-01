@@ -20,10 +20,22 @@ variable "nodegroup_subnet_ids" {
   type = list(string)
 }
 
+variable "nodegroup_desired_size" {
+  type = number
+}
+
+variable "nodegroup_min_size" {
+  type = number
+}
+
+variable "nodegroup_max_size" {
+  type = number
+}
+
 variable "nodegroup_disk_size" {
   type = string
 }
 
 variable "nodegroup_instance_types" {
-  type = string
+  type = list(string)
 }
