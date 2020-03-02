@@ -18,6 +18,8 @@ jobs:
         tf_actions_comment: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: 'Terraform Link'
+      run: echo 'to be implemented'
     - name: 'Terraform Init Dev'
       uses: hashicorp/terraform-github-actions@master
       with:
